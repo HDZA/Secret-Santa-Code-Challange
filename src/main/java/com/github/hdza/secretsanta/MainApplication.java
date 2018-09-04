@@ -42,6 +42,7 @@ public class MainApplication {
         try {
             returnListed = christmasList.generateSecretSantaList(secretSantaList); //Generates the secret santa parings.
         }catch(NumberOfPeopleException e){
+
             logger.log(Level.SEVERE,"There was an issue with the data format in the generateSecretSantaList function", e);
         }
 
