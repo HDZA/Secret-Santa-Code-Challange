@@ -62,6 +62,7 @@ public class MainApplication {
             yearTwoList = secretSantaList.generateRecieversList(secretSantaGiversList, yearOneList);
             yearThreeList = secretSantaList.generateRecieversList(secretSantaGiversList, yearTwoList);
 
+            secretSantaList.verifyNoRepeatsOverThreeyears(secretSantaGiversList,yearOneList,yearTwoList,yearThreeList);
 
         } catch (TooFewForSSException | TooFewForPartTwo e) { //Since we can have too few people in the case of repeat pairs throw a new exception.
             logger.log(Level.SEVERE, "There was an issue with the data format in the generateSecretSantaList function.", e.getMessage());

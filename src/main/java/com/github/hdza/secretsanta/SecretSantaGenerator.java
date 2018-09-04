@@ -20,9 +20,6 @@ class SecretSantaGenerator {
      */
     List<String> generateSecretSantaList(List<String> secretSantaGiversList, List<String> secretSantaReceiversList) throws TooFewForSSException, TooFewForPartTwo {
 
-        List<String> localSecretSantaGiversList = new ArrayList<>(secretSantaGiversList); //Create local variables to copy to since I keep getting weird errors. Where changes to third year list bubble up to first year and second year list.
-        List<String> localSecretSantaReceiversList = new ArrayList<>(secretSantaGiversList);
-
         Collections.shuffle(secretSantaGiversList); //Shuffle the two lists. Much like in part 1 I don't think people would actually notice but it prevents undue influence from whoever controls the program.
         if (secretSantaGiversList.size() < 2) {
             throw new TooFewForSSException("You don't have enough people to do a secret santa event.");
@@ -31,33 +28,34 @@ class SecretSantaGenerator {
         }
 
 
-        return generateRecieversList(localSecretSantaGiversList, localSecretSantaReceiversList);
+        return generateRecieversList(secretSantaGiversList, secretSantaReceiversList);
     }
 
     List<String> generateRecieversList(List<String> localSecretSantaGiversList, List<String> localSecretSantaReceiversList) {
-        Collections.shuffle(localSecretSantaReceiversList);
+        List<String> localRecieversList = new ArrayList<>(localSecretSantaReceiversList);
+        Collections.shuffle(localRecieversList);
         int familyIndexNumber = 0; //This constant is pulling the number I assigned to each family.
         int recieverIndex; //Number will be set later on in the for loop.
         for (int index = 0; index < localSecretSantaGiversList.size(); index++) {
             char giversFamNumber = localSecretSantaGiversList.get(index).charAt(familyIndexNumber);
 
-            if (giversFamNumber == localSecretSantaReceiversList.get(index).charAt(familyIndexNumber)) {
+            if (giversFamNumber == localRecieversList.get(index).charAt(familyIndexNumber)) {
                 if (index == localSecretSantaGiversList.size() - 1) {
                     recieverIndex = 0;
                 } else {
                     recieverIndex = index + 1;
                 }
-                while (giversFamNumber == localSecretSantaReceiversList.get(recieverIndex).charAt(familyIndexNumber)) { //If the family numbers of the givers and recievers don't match up. We have a valid pairing! Otherwise keep checking.
+                while (giversFamNumber == localRecieversList.get(recieverIndex).charAt(familyIndexNumber)) { //If the family numbers of the givers and recievers don't match up. We have a valid pairing! Otherwise keep checking.
                     if (recieverIndex == localSecretSantaGiversList.size() - 1) {
                         recieverIndex = 0; //If we have checked all indexes of the reciever list. Then start at the beginning.
                     } else {
                         recieverIndex += 1; //Don't want to do swaps on valid assignments( if any ). Do checks for possible switches to the right of whatever Index the giversList is on.
                     }
                 }
-                Collections.swap(localSecretSantaReceiversList, index, recieverIndex);
+                Collections.swap(localRecieversList, index, recieverIndex);
             }
         }
-        return localSecretSantaGiversList;
+        return localRecieversList;
     }
 
 
