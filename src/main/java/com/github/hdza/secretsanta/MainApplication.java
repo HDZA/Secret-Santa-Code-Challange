@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -24,8 +25,9 @@ public class MainApplication {
 
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(MainApplication.class.getName()); //Create a logger to output error messages.
-        List<String> secretSantaList = new ArrayList<>();
-        String filename;
+        List<String> secretSantaGiversList = new ArrayList<>();
+        List<String> inputList =  new ArrayList<>(); //List that the input file gets parsed into.
+        String filename; //Empty string to hold the filename. It can be the default or a user provided one.
 
         if (args.length == 0) { //if args argument is empty, provide a default. This is so I can run junit tests with different inputs.
             filename = "inputlist.txt";
@@ -33,32 +35,40 @@ public class MainApplication {
             filename = Arrays.toString(args);
         }
 
-        try (Stream<String> stream = Files.lines(Paths.get(filename))) {  //Try with statement closes the stream for us sooner than the GC would. Stream also implements AutoCloseable so OS resources aren't tied up.
-            secretSantaList = stream.collect(Collectors.toList()); //Parse the text file line by line, then convert it to a List of type String.
+        try{
+             inputList = Files.readAllLines(Paths.get(filename)); //Read in the file input. Put it in an inputList.
         } catch (IOException e) { //Make sure we have code to catch the instance in which we don't find our inputlist.txt
             logger.log(Level.SEVERE, "The textfile input you specified was not found. Ensure that it exists under the main directory of the project", e);
         }
 
-        SecretSantaGenerator christmasList = new SecretSantaGenerator();
+        for(int index = 0; index< inputList.size(); index++){
+            StringTokenizer token = new StringTokenizer(inputList.get(index));
+            while(token.hasMoreTokens()){
+                secretSantaGiversList.add(index + " " + token.nextToken()); //Grab the line number the family was on plus the actual name of the family member.
+            }
+        }
 
+        List<String> secretSantaReceiversList = new ArrayList<>(secretSantaGiversList); //Make a copy of the givers list and put it into receivers.
         /*
-            We can pretend that these Lists for year one two and three are actually just calls to a "database" keeping track of who was giving gifts to who.
+            Pretend like these year one two and three lists are a "database" that we store this info in long term.
          */
-        List<String> yearOneList = new ArrayList<>();
-        List<String> yearTwoList = new ArrayList<>();
-        List<String> yearThreeList = new ArrayList<>();
+        List<String> yearOneList = null;
+        List<String> yearTwoList = null;
+        List<String> yearThreeList =  null;
+        SecretSantaGenerator secretSantaList = new SecretSantaGenerator();
+
         try {
-            secretSantaList = christmasList.generateSecretSantaList(secretSantaList); //Generate the initial secret santa "seed" list. This will be the gift giver section of the gift giver/receiver pair.
-            yearOneList = christmasList.generateGiftReceiverList(secretSantaList);//Generates the secret santa receiver parings for the gift giver using the secretSantaList as a seed.
-            yearTwoList = christmasList.generateGiftReceiverList(yearOneList);//Generates the secret santa receiver parings using the yearOneList as a seed.
-            yearThreeList = christmasList.generateGiftReceiverList(yearTwoList);//Generates the secret santa receiver parings using the yearTwoList as a seed.
+            yearOneList = secretSantaList.generateSecretSantaList(secretSantaGiversList, secretSantaReceiversList);
+            yearTwoList = secretSantaList.generateRecieversList(secretSantaGiversList, yearOneList);
+            yearThreeList = secretSantaList.generateRecieversList(secretSantaGiversList, yearTwoList);
+
+
         } catch (TooFewForSSException | TooFewForPartTwo e) { //Since we can have too few people in the case of repeat pairs throw a new exception.
             logger.log(Level.SEVERE, "There was an issue with the data format in the generateSecretSantaList function.", e.getMessage());
         }
 
-        OutputResult outputToFile = new OutputResult();
-        outputToFile.outputResultToFile(secretSantaList, yearOneList, yearTwoList, yearThreeList);
+        OutputResult outputter = new OutputResult();
+        outputter.outputResultToFile(secretSantaGiversList,yearOneList,yearTwoList,yearThreeList);
 
     }
 }
- 

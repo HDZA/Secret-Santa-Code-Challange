@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class SecretSantaListGeneratorTest {
-
+/**
     //Part 2 Note: I refactored the custom exception we throw to be more specific. In this case we're providing a list with less than 2 people. Which is not enough to even do a SS under part 1 conditions.
     @Test(expected = TooFewForSSException.class) //We expect this very specific exception to be thrown.
     public void zeroParticipantTest() throws Exception { //Test the case where we have less than 2 people
@@ -70,10 +70,14 @@ public class SecretSantaListGeneratorTest {
             by the object. I could redesign the classes to return a list of a list so we could check it all in one line but at the end of the day you're still examining 3 Lists against one List.
             Brushing things under the carpet like that isn't good code style either. @Before wont help either since it makes no sense to run this specific function everytime before every test. That causes it's own host of issues.
          */
+/**
         assertNotEquals("Lists match up index by index in year one which means people are giving gifts to themselves.",participantList, yearOneList); //Make sure that the two Lists are a valid derangement of the set.
         assertNotEquals("Lists match up index by index in year two which means people are giving gifts to themselves.",participantList, yearTwoList); //Make sure that the two Lists are a valid derangement of the set.
         assertNotEquals("Lists match up index by index in year three which means people are giving gifts to themselves.",participantList, yearThreeList); //Make sure that the two Lists are a valid derangement of the set.
     }
+ **/
+
+
 
 
 }
