@@ -4,20 +4,20 @@ package com.github.hdza.secretsanta;
 /*
     Create a basic custom exception class. It's in the same package since exceptions should be co-located with the things that cause that exception.
  */
-public class NumberOfPeopleException extends Exception {
-    public NumberOfPeopleException() {
+public class TooFewForSSException extends Exception {
+    public TooFewForSSException() {
 
     }
 
-    NumberOfPeopleException(String message) {
+    TooFewForSSException(String message) {
         super (message);
     }
 
-    public NumberOfPeopleException(Throwable cause) {
+    public TooFewForSSException(Throwable cause) {
         super (cause);
     }
 
-    public NumberOfPeopleException(String message, Throwable cause) {
+    public TooFewForSSException(String message, Throwable cause) {
         super (message, cause);
     }
 }
