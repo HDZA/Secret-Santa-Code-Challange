@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainApplication {
     private String filename;
@@ -49,27 +47,20 @@ public class MainApplication {
         }
 
         List<String> secretSantaReceiversList = new ArrayList<>(secretSantaGiversList); //Make a copy of the givers list and put it into receivers.
-        /*
-            Pretend like these year one two and three lists are a "database" that we store this info in long term.
-         */
-        List<String> yearOneList = null;
-        List<String> yearTwoList = null;
-        List<String> yearThreeList =  null;
         SecretSantaGenerator secretSantaList = new SecretSantaGenerator();
 
         try {
-            yearOneList = secretSantaList.generateSecretSantaList(secretSantaGiversList, secretSantaReceiversList);
-            yearTwoList = secretSantaList.generateRecieversList(secretSantaGiversList, yearOneList);
-            yearThreeList = secretSantaList.generateRecieversList(secretSantaGiversList, yearTwoList);
+            secretSantaList.setGiverList(secretSantaList.generateSecretSantaGiversList(secretSantaGiversList));
+            secretSantaList.setYearOneList(secretSantaList.generateRecieversList(secretSantaList.getGiverList(),secretSantaReceiversList));
+            secretSantaList.setYearTwoList(secretSantaList.generateRecieversList(secretSantaList.getGiverList(),secretSantaList.getYearOneList()));
+            secretSantaList.setYearThreeList(secretSantaList.generateRecieversList(secretSantaList.getGiverList(),secretSantaList.getYearTwoList()));
+            secretSantaList.verifyNoRepeatsOverThreeyears(); //Make sure that the lists are different from year to year. If not generate new ones.
 
-            secretSantaList.verifyNoRepeatsOverThreeyears(secretSantaGiversList,yearOneList,yearTwoList,yearThreeList);
-
-        } catch (TooFewForSSException | TooFewForPartTwo e) { //Since we can have too few people in the case of repeat pairs throw a new exception.
-            logger.log(Level.SEVERE, "There was an issue with the data format in the generateSecretSantaList function.", e.getMessage());
+        } catch (NotEnoughFamily | TooFewForSSException | TooFewForPartTwo e) { //Since we can have too few people in the case of repeat pairs throw a new exception.
+            logger.log(Level.SEVERE, "There was an issue with the data format given in the inputlist.txt. ", e);
         }
 
         OutputResult outputter = new OutputResult();
-        outputter.outputResultToFile(secretSantaGiversList,yearOneList,yearTwoList,yearThreeList);
-
+        outputter.outputResultToFile(secretSantaGiversList,secretSantaList.getYearOneList(),secretSantaList.getYearTwoList(), secretSantaList.getYearThreeList());
     }
 }
